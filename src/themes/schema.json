@@ -1,0 +1,30 @@
+{
+    "data": {
+        "light": {
+            "id": "T_001",
+            "name": "Light Mode",
+            "colors": {
+                "header": "#6fc5fc",
+                "body": "#a1daff",
+                "bodyAccent": "#8cd2ff",
+                "bodyAccent2": "#c0e3fa",
+                "text": "#2b3942",
+                "textAccent": "#213440"
+            },
+            "font": "Tinos"
+        },
+        "dark": {
+            "id": "T_007",
+            "name": "Dark Mode",
+            "colors": {
+                "header": "#0e142e",
+                "body": "#263163",
+                "bodyAccent": "#394785",
+                "bodyAccent2": "#344aad",
+                "text": "#edf1ff",
+                "textAccent": "#d2dafc"
+            },
+            "font": "Ubuntu"
+        }
+    }
+}
