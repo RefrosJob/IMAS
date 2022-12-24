@@ -10,11 +10,10 @@ export function useTheme(): UseTheme {
 
     useEffect(() => {
         const localTheme = getFromLS<DefaultTheme>('theme');
-        console.log('first theme loaded', localTheme);
         if (localTheme?.colors) {
             setTheme(localTheme);
         } else {
-            setTheme(themes.data.dark);
+            setTheme(themes.data.light);
         }
         setThemeLoaded(true);
     }, []);

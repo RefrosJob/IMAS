@@ -15,19 +15,32 @@ export const GlobalStyles = createGlobalStyle<{ theme: DefaultTheme }>`
     font: ${({ theme }) => theme.font} !important;
     color: var(--text-color) !important;
   }
-    
 
+  .full-width-height {
+    width: 100%;
+    height: 100%;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  //dev related classes
+
+  .full-border-white {
+    border: 1px solid white;
+  }
+
+  .full-border-black {
+    border: 1px solid black;
+  }
 `;
 
 export const Wrapper = styled.div`
     height: 100%;
     width: 100%;
 
-    .ant-layout-header {
-        padding: 0 2rem 0 2rem;
-    }
-
-    .full-width {
-        width: 100%;
+    .app-header {
+        background-color: var(--header-color) !important;
     }
 `;

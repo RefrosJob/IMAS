@@ -1,5 +1,6 @@
 import { Layout } from 'antd';
 import React from 'react';
+import { AppHeader } from '../../components/AppHeader/AppHeader';
 import { Wrapper } from './style';
 
 export function AppPage(): JSX.Element {
@@ -9,7 +10,7 @@ export function AppPage(): JSX.Element {
         <Wrapper>
             <Layout className='layout app-layout'>
                 <Header className='app-header'>
-                    <div>Hello World!</div>
+                    <AppHeader />
                 </Header>
                 <Content className='app-content'></Content>
             </Layout>
