@@ -112,7 +112,7 @@ function getResourceName(resourcePath) {
 
 function getResourceRootFolder(resourcePath) {
     const parts = resourcePath.replace(/-/g, `${sep}`).split(sep);
-    return parts[1]; // components, layouts, microservices, pages, services
+    return parts[1];
 }
 
 function getResourceTypeByResourceFolder(resourceFolder) {

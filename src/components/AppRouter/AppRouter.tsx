@@ -1,11 +1,13 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AppRoutes } from '../../types/appRouter';
 
 interface Props {
-    routes: { path: string; component: JSX.Element }[];
+    routes: AppRoutes;
+    navigation?: JSX.Element;
 }
 
-export function AppRouter({ routes }: Props): JSX.Element {
+export function AppRouter({ routes, navigation }: Props): JSX.Element {
     return (
         <BrowserRouter>
             <Routes>
@@ -13,6 +15,7 @@ export function AppRouter({ routes }: Props): JSX.Element {
                     <Route key={id} path={path} element={component} />
                 ))}
             </Routes>
+            {navigation}
         </BrowserRouter>
     );
 }

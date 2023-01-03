@@ -9,11 +9,13 @@ export const GlobalStyles = createGlobalStyle<{ theme: DefaultTheme }>`
     --body-accent-color-2: ${({ theme }) => theme.colors.bodyAccent2};
     --text-color: ${({ theme }) => theme.colors.text};
     --text-accent-color: ${({ theme }) => theme.colors.textAccent};
+    --default-font: ${({ theme }) => theme.font};
   }
 
   * {
     font: ${({ theme }) => theme.font} !important;
     color: var(--text-color) !important;
+    font-weight: 400;
   }
 
   .full-width-height {

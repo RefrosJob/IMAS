@@ -5,7 +5,7 @@ import Wrapper from './style';
 
 const { Title } = Typography;
 
-export function AppHeader() {
+export function AppHeader(): JSX.Element {
     const items: MenuProps['items'] = [
         {
             key: '1',
@@ -26,7 +26,7 @@ export function AppHeader() {
         <Wrapper>
             <Row className='full-width-height'>
                 <Col span={4}>
-                    <Space>
+                    <Space direction='vertical'>
                         <Title level={4}>IMAS | your invoice solution</Title>
                     </Space>
                 </Col>
