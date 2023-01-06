@@ -11,7 +11,7 @@ import { WelcomePage } from './pages/Welcome/WelcomePage';
 import { IMASPage } from './pages/IMAS/IMASPage';
 import { RegistrationPage } from './pages/Registration/RegistrationPage';
 import { IMASCreateNewPage } from './pages/IMAS/CreateNew/IMASCreateNewPage';
-import { IMASCreateTemplate } from './components/IMAS/CreateTemplate/IMASCreateTemplate';
+import { IMASCreateTemplatePage } from './pages/IMAS/CreateTemplate/IMASCreateTemplatePage';
 
 function App(): JSX.Element {
     const { theme, themeLoaded, getFonts } = useTheme();
@@ -37,7 +37,7 @@ function App(): JSX.Element {
                         },
                         {
                             path: 'Create/Template',
-                            element: <IMASCreateTemplate />,
+                            element: <IMASCreateTemplatePage />,
                         },
                     ],
                 },

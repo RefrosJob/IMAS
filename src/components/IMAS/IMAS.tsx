@@ -6,17 +6,18 @@ import {
     PlusOutlined,
     UserOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, MenuProps, Space, Typography } from 'antd';
+import { Breadcrumb, Layout, Menu, MenuProps, Space, Tabs, Typography } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
-import React, { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { IMASKeys } from '../../types/appRouter';
 import Wrapper from './styles';
 
 const { Title } = Typography;
 
 export function IMAS(): JSX.Element {
+    const location = useLocation();
     const [collapsed, setCollapsed] = useState(false);
     const [selection, setSelection] = useState('1');
     const navigate = useNavigate();
@@ -34,7 +35,6 @@ export function IMAS(): JSX.Element {
             getItem('Alex', '7'),
         ]),
     ];
-
     function getItem(
         label: React.ReactNode,
         key: React.Key,
@@ -58,6 +58,15 @@ export function IMAS(): JSX.Element {
             navigate('/IMAS/Create/Template');
         }
     };
+
+    function createBreadCrumbs() {
+        const locationElements = location.pathname.split('/');
+        if (locationElements.length && locationElements.includes('IMAS')) {
+            return locationElements.map((item, index) => (
+                <Breadcrumb.Item key={`${item}-${index}`}>{item}</Breadcrumb.Item>
+            ));
+        }
+    }
 
     return (
         <Wrapper>
@@ -88,8 +97,7 @@ export function IMAS(): JSX.Element {
                                 },
                             )}
                             <Breadcrumb style={{ margin: '16px 0' }}>
-                                <Breadcrumb.Item>User</Breadcrumb.Item>
-                                <Breadcrumb.Item>Bill</Breadcrumb.Item>
+                                {createBreadCrumbs()}
                             </Breadcrumb>
                         </Space>
                         <div

@@ -3,6 +3,8 @@ import { DefaultTheme } from './types/theme';
 
 export const GlobalStyles = createGlobalStyle<{ theme: DefaultTheme }>`
   :root {
+
+    overflow: hidden;
     --header-color: ${({ theme }) => theme.colors.header};
     --body-color: ${({ theme }) => theme.colors.body};
     --body-accent-color: ${({ theme }) => theme.colors.bodyAccent};

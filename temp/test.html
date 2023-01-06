@@ -1,5 +1,4 @@
-export function generateTemplate(title: string): string {
-    return `<!DOCTYPE html>
+<!DOCTYPE html>
 <style>
     .main-body {
         font-family: 'Helvetica', 'Arial', sans-serif;
@@ -8,8 +7,8 @@ export function generateTemplate(title: string): string {
         -moz-osx-font-smoothing: grayscale;
     }
 
-    .heading-text {
-        font-size: 1.5rem;
+    .main-body > h1 {
+        font-size: large;
     }
 
     .container-main {
@@ -168,9 +167,9 @@ export function generateTemplate(title: string): string {
     <div class="container-main">
         <div class="header-container">
             <div class="header-child">
-                <h1 class="heading-text">Title</h1>
+                <h1>Title</h1>
             </div>
-            <div class="header-child centered-text heading-text">
+            <div class="header-child centered-text">
                 <h1>INVOICE</h1>
             </div>
             <div class="header-child logo-container">
@@ -287,5 +286,3 @@ export function generateTemplate(title: string): string {
     </div>
 </body>
 </html>
-`;
-}
