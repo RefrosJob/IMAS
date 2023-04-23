@@ -1,11 +1,38 @@
-export function generateTemplate(title: string): string {
+import { replace } from 'lodash';
+import { DetailLine, DetailLines, InvoiceData, InvoiceStyling, Lines } from '../types/invoice';
+
+export function generateTemplate(invoiceData: InvoiceData, invoiceStyling: InvoiceStyling): string {
+    const { header, companyData, clientContact, termsAndConditions, invoiceDetails, logoUrl } =
+        invoiceData;
+    const { backgroundColor, fontSize, fontName, fontFamily } = invoiceStyling;
+
+    function getLines(lines: Lines) {
+        return replace(lines.toString(), /,/g, '<br /> \n');
+    }
+
+    function getDetailLines(detailLine: string[]) {
+        return replace(detailLine.toString(), /,/g, '\n');
+    }
+
+    console.log(
+        replace(
+            clientContact.secondColumn?.lines.map((line) => line + '<br>').toString() || '',
+            /,/g,
+            '',
+        ),
+    );
     return `<!DOCTYPE html>
 <style>
     .main-body {
-        font-family: 'Helvetica', 'Arial', sans-serif;
+        border-radius: 1em;
+        padding: 2em;
+        height: 80em;
+        font-family: ${fontName}, 'Arial', ${fontFamily};
+        font-size: ${fontSize}px;
         margin: 1rem;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        background-color: ${backgroundColor};
     }
 
     .heading-text {
@@ -59,7 +86,7 @@ export function generateTemplate(title: string): string {
 
     .table-row {
         height: 3.5rem;
-        border: 1px solid silver;
+        border: 1px solid black;
     }
 
     .table-total-row {
@@ -67,12 +94,12 @@ export function generateTemplate(title: string): string {
     }
 
     .table-column {
-        border: 1px solid silver;
+        border: 1px solid black;
         padding-left: 0.5rem;
     }
 
     .table-column-total-lable {
-        border: 1px solid silver;
+        border: 1px solid black;
         padding-left: 0.5rem;
     }
 
@@ -84,6 +111,10 @@ export function generateTemplate(title: string): string {
         width: 20%;
         text-align: end;
         padding-right: 0.5rem;
+    }
+
+    .subtotal-column {
+        border-top: none !important;
     }
 
     .total-column {
@@ -102,7 +133,7 @@ export function generateTemplate(title: string): string {
     }
 
     .cross-border-top {
-        border-top: 0px;
+        border-top: none;
     }
 
     /* strict */
@@ -143,16 +174,19 @@ export function generateTemplate(title: string): string {
         display: flex;
         justify-content: center;
         align-items: center;
+
     }
 
     .footer-image {
         padding: 50px;
-        height: 200px;
-        width: 400px;
+        height: 300px;
+        width: 300px;
+
     }
 
     .terms-and-conditions {
         padding: 2rem;
+        max-height:90%;
         border-right: 1px solid silver;
 
     }
@@ -164,57 +198,60 @@ export function generateTemplate(title: string): string {
     
     
 </style>
-<body class="main-body">
+<body>
+<div class="main-body">
     <div class="container-main">
         <div class="header-container">
             <div class="header-child">
-                <h1 class="heading-text">Title</h1>
+                <h1 class="heading-text">${header.titleLeft}</h1>
             </div>
             <div class="header-child centered-text heading-text">
-                <h1>INVOICE</h1>
+                <h1>${header.titleCenter}</h1>
             </div>
             <div class="header-child logo-container">
-                <img height="80px" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/7a3ec529632909.55fc107b84b8c.png" alt="LOGO">
+                <img height="80px" src="${logoUrl}" alt="LOGO">
             </div>
         </div>
         <div> 
-            <h2>Company data</h2>
-            <p class="inner-contact-text">1912 harves <br> 
-                            2 court <br>
-                            New York<br>
-                            +37259595930</p>
+            <h2>${companyData.title}</h2>
+            <p class="inner-contact-text">${getLines(companyData.lines)}</p>
         </div>
         <div class="contact-line">
             <div>
-                <h2>Bill to</h2>
-                <p class="inner-contact-text">1912 harves <br> 
-                                2 court <br>
-                                New York</p>
+                <h2>${clientContact.firstColumn.title}</h2>
+                <p class="inner-contact-text">${getLines(clientContact.firstColumn.lines)}</p>
 
             </div>
-             <div>
-                <h2>Ship to</h2>
-                 <p class="inner-contact-text">1912 harves <br> 
-                    2 court <br>
-                New York</p>
-            </div>
+            
+                     <div>
+                      ${
+                          clientContact.secondColumn?.title
+                              ? `
+                                <h2>${clientContact.secondColumn.title}</h2>
+                                <p class="inner-contact-text">${getLines(
+                                    clientContact.secondColumn.lines,
+                                )}
+                                </p> `
+                              : ''
+                      }
+                    </div>
             <div class="contact-line-2">
                 <ul class="invoice-info-list">
                     <li>
-                          <p class="sub-heading-big"><b>Invoice nr.</b> 12345</p>
+                          <p class="sub-heading-big"><b>Invoice nr.</b> ${
+                              invoiceDetails.invoiceNr
+                          }</p>
                     </li>
-                    <li>
-                        <p><b class="sub-heading">Option:</b> 1</p>
-                    </li>
-                    <li>
-                          <p><b class="sub-heading">Option:</b> 2</p>
-                    </li>
-                    <li>
-                          <p><b class="sub-heading">Option:</b> 3</p>
-                    </li>
-                    <li>
-                          <p><b class="sub-heading">Option:</b> 4</p>
-                    </li>
+                    ${
+                        invoiceDetails.detailLines
+                            ? getDetailLines(
+                                  invoiceDetails.detailLines.map(
+                                      (detailLine) =>
+                                          `<li><p></p><b class="sub-heading">${detailLine?.title}: </b>${detailLine?.data}</p></li>`,
+                                  ),
+                              )
+                            : ''
+                    }
                 </ul>
             </div>
             
@@ -247,17 +284,17 @@ export function generateTemplate(title: string): string {
                     <table class="commodity-sale-table-total">
                          <tr class="table-total-row">
                             <td></td>
-                            <td class="table-column total-column" width="10%">Subtotal: </td>
-                            <td class="table-column total-column amount-column" width="20%">10$</td>
+                            <td class="table-column total-column subtotal-column" width="14%">Subtotal: </td>
+                            <td class="table-column total-column amount-column subtotal-column" width="20%">10$</td>
                         </tr>
                         <tr class="table-total-row">
                             <td></td>
-                            <td class="table-column total-column cross-border-top" width="10%">Tax: </td>
+                            <td class="table-column total-column cross-border-top" width="14%">Tax: </td>
                             <td class="table-column total-column amount-column cross-border-top" width="20%">20%</td>
                         </tr>
                          <tr class="table-total-row">
                             <td></td>
-                            <td class="table-column total-column" width="10%">Total: </td>
+                            <td class="table-column total-column" width="14%">Total: </td>
                             <td class="table-column total-column amount-column" width="20%">12$</td>
                         </tr>
                     </table>
@@ -268,22 +305,13 @@ export function generateTemplate(title: string): string {
     </div>
     <div class="footer">
         <div class="terms-and-conditions">
-            <h2>Terms & Conditions</h2>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                when an unknown printer took a galley of type and scrambled it to make
-                a type specimen book. It has survived not only five centuries, 
-                but also the leap into electronic typesetting, 
-                remaining essentially unchanged. 
-                It was popularised in the 1960s with the release of 
-                Letraset sheets containing Lorem Ipsum passages, and more 
-                recently with desktop publishing software like Aldus 
-                PageMaker including versions of Lorem Ipsum.
-            </p>
+            <h2>${termsAndConditions.title}</h2>
+            <p>${termsAndConditions.body} </p>
         </div>
         <div class="footer-image-container">
-            <img class="footer-image" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/7a3ec529632909.55fc107b84b8c.png" />
+            <img class="footer-image" src="${logoUrl}" />
         </div>
+    </div>
     </div>
 </body>
 </html>

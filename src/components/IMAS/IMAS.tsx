@@ -1,5 +1,6 @@
 import {
     DollarCircleOutlined,
+    HomeOutlined,
     LayoutOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -24,16 +25,26 @@ export function IMAS(): JSX.Element {
 
     type MenuItem = Required<MenuProps>['items'][number];
 
+    useEffect(() => {
+        setSelection(getSelection());
+    }, []);
+
+    function getSelection() {
+        console.log(location.pathname);
+        if (location.pathname === '/IMAS/Create/Invoice') {
+            return '1';
+        }
+        return '2';
+    }
+
     const items: MenuItem[] = [
+        getItem('Home', IMASKeys.home, <HomeOutlined />),
         getItem('Create new', 'create', <PlusOutlined />, [
             getItem('Invoice', IMASKeys.createInvoice, <DollarCircleOutlined />),
             getItem('Template', IMASKeys.createTemplate, <LayoutOutlined />),
+            getItem('Data Template', IMASKeys.createDataTemplate, <LayoutOutlined />),
         ]),
-        getItem('User', '4', <UserOutlined />, [
-            getItem('Tom', '5'),
-            getItem('Bill', '6'),
-            getItem('Alex', '7'),
-        ]),
+        getItem('User Management', IMASKeys.userManagement, <UserOutlined />),
     ];
     function getItem(
         label: React.ReactNode,
@@ -50,7 +61,6 @@ export function IMAS(): JSX.Element {
     }
 
     const handleSelection: MenuProps['onClick'] = (e) => {
-        setSelection(e.key);
         if (e.key === IMASKeys.createInvoice) {
             navigate('/IMAS/Create/Invoice');
         }

@@ -21,18 +21,7 @@ export default styled.div`
         display: inline-flex;
         border: 1px solid black;
     }
-    .template-editor {
-        height: 50rem;
-        .inner-template-editor {
-            width: 40rem;
-            height: 45rem;
-            overflow-y: scroll;
-            overflow-x: hidden;
-        }
-        .editor-collapse {
-            max-width: 40rem;
-        }
-    }
+
     .invoice-preview {
         height: 45rem;
         overflow-y: scroll;

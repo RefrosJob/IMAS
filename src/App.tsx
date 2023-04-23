@@ -12,6 +12,7 @@ import { IMASPage } from './pages/IMAS/IMASPage';
 import { RegistrationPage } from './pages/Registration/RegistrationPage';
 import { IMASCreateNewPage } from './pages/IMAS/CreateNew/IMASCreateNewPage';
 import { IMASCreateTemplatePage } from './pages/IMAS/CreateTemplate/IMASCreateTemplatePage';
+import { IMASCreateNewInvoice } from './components/IMAS/CreateNew/Invoice/IMASCreateNewInvoice';
 
 function App(): JSX.Element {
     const { theme, themeLoaded, getFonts } = useTheme();
@@ -34,6 +35,10 @@ function App(): JSX.Element {
                         {
                             path: 'Create/Invoice',
                             element: <IMASCreateNewPage />,
+                        },
+                        {
+                            path: 'Create/Invoice/:invoiceId',
+                            element: <IMASCreateNewInvoice />,
                         },
                         {
                             path: 'Create/Template',

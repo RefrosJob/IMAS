@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type anyType = any;
 
-export function setToLS(key: string, value: anyType): void {
+export function setToLS<T = anyType>(key: string, value: T): void {
     window.localStorage.setItem(key, JSON.stringify(value));
 }
 
