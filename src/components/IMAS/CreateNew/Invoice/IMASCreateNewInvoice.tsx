@@ -45,7 +45,18 @@ export function IMASCreateNewInvoice(): JSX.Element | null {
         return setToLS<InvoiceInfo[]>('invoice-history', [invoiceInfo]);
     }
 
+    function valiedateEmail(email: string): boolean {
+        const validationRegex =
+            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        return Boolean(email.toLowerCase().match(validationRegex));
+    }
+
     function handleSend() {
+        const isValidEmail = valiedateEmail(recipientEmail);
+        if (!isValidEmail) {
+            return setIsInputError(true);
+        }
+
         const invoiceInfo: InvoiceInfo = {
             templateId: Number(templateId),
             invoiceFull: invoiceFull,
