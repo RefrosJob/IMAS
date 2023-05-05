@@ -9,7 +9,7 @@ interface Props {
     setNewInvoice: (invoice: InvoiceData) => void;
 }
 
-export function IMASCreateTemplateHeaders({ newInvoice, setNewInvoice }: Props) {
+export function IMASCreateTemplateHeaders({ newInvoice, setNewInvoice }: Props): JSX.Element {
     const { header, companyData, clientContact, termsAndConditions } = newInvoice;
 
     function setTitleLeft(titleLeft: string) {

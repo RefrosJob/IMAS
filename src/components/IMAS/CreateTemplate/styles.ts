@@ -17,11 +17,12 @@ export default styled.div`
         }
     }
 
-    .preview-card {
-        display: inline-flex;
-        border: 1px solid black;
-    }
     .template-editor {
+        padding: 2em;
+        margin: 0.5em;
+        border-radius: 1em;
+        box-shadow: 0 0 2px var(--header-color);
+        background-color: var(--body-accent-color-2);
         height: 50rem;
         .inner-template-editor {
             width: 40rem;
@@ -34,8 +35,10 @@ export default styled.div`
         }
     }
     .invoice-preview {
-        height: 45rem;
-        overflow-y: scroll;
-        overflow-x: hidden;
+        padding: 2em;
+        margin: 0.5em;
+        border-radius: 1em;
+        box-shadow: 0 0 2px var(--header-color);
+        background-color: var(--body-accent-color-2);
     }
 `;

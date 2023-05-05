@@ -17,13 +17,15 @@ export default styled.div`
         }
     }
 
-    .preview-card {
-        display: inline-flex;
-        border: 1px solid black;
+    .floating-select {
+        position: absolute;
+        z-index: 100;
+        left: 3em;
+        top: 7em;
     }
 
-    .invoice-preview {
-        height: 45rem;
+    .invoice-preview-wrapper {
+        height: 42rem;
         overflow-y: scroll;
         overflow-x: hidden;
     }

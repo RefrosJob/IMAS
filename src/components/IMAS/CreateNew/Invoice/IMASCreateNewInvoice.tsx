@@ -1,178 +1,152 @@
+import { Button, Col, Collapse, Input, Modal, Row, Space, Typography } from 'antd';
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Wrapper from './styles';
-import { Button, Col, Collapse, Input, Row, Space, Typography } from 'antd';
-import { getFromLS } from '../../../../microservices/storage';
-import { DetailLine, DetailLines, InvoiceFull } from '../../../../types/invoice';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getFromLS, setToLS } from '../../../../microservices/storage';
+import { InvoiceFull, InvoiceInfo } from '../../../../types/invoice';
 import { IMASInvoicePreview } from '../../InvoicePreview/IMASInvoicePreview';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { cloneDeep } from 'lodash';
+import { IMASCreateNewInvoiceDetailInput } from './DetailInput/IMASCreateNewInvoiceDetailInput';
+import { IMASCreateNewInvoiceItemInput } from './ItemInput/IMASCreateNewInvoiceItemInput';
+import Wrapper from './styles';
+import { IMASCreateNewInvoiceTaxInput } from './TaxInput/IMASCreateNewInvoiceTaxInput';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-export function IMASCreateNewInvoice() {
-    const { invoiceId } = useParams();
+export function IMASCreateNewInvoice(): JSX.Element | null {
+    const navigate = useNavigate();
+    const { templateId } = useParams();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [recipientEmail, setRecipientEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isInputError, setIsInputError] = useState(false);
     const [invoiceFull, setInvoiceFull] = useState(
-        getFromLS<InvoiceFull[]>('invoice-list')[Number(invoiceId)],
+        getFromLS<InvoiceFull[]>('invoice-list')[Number(templateId)],
     );
     const { invoiceData, invoiceStyling } = invoiceFull;
     const { invoiceDetails } = invoiceData;
-    const { detailLines } = invoiceDetails;
 
-    function handleRemoveInvoiceDetailLine(indexToRemove: number) {
-        console.log(indexToRemove);
-        if (detailLines) {
-            const newDetailLines = cloneDeep<DetailLines>(detailLines).filter(
-                (_, index) => index !== indexToRemove,
-            );
-            return setInvoiceFull({
-                ...invoiceFull,
-                invoiceData: {
-                    ...invoiceData,
-                    invoiceDetails: { ...invoiceDetails, detailLines: newDetailLines },
-                },
-            });
-        }
+    if (!templateId) {
+        navigate('/IMAS/Home');
+        return null;
     }
 
-    function handleAddInvoiceDetailLine() {
-        const detailLine: DetailLine = {
-            title: 'Option #1',
-            data: '1',
-        };
-        if (detailLines && detailLines.length) {
-            const detailLine: DetailLine = {
-                title: `Option #${detailLines.length + 1}`,
-                data: (detailLines.length + 1).toString(),
-            };
-            const newDetailLines = [...cloneDeep<DetailLines>(detailLines), detailLine];
-            return setInvoiceFull({
-                ...invoiceFull,
-                invoiceData: {
-                    ...invoiceData,
-                    invoiceDetails: { ...invoiceDetails, detailLines: newDetailLines },
-                },
-            });
-        }
-        return setInvoiceFull({
+    function handleInvoiceNumberChange(invoiceNr: string) {
+        setInvoiceFull({
             ...invoiceFull,
-            invoiceData: {
-                ...invoiceData,
-                invoiceDetails: { ...invoiceDetails, detailLines: [detailLine] },
-            },
+            invoiceData: { ...invoiceData, invoiceDetails: { ...invoiceDetails, invoiceNr } },
         });
     }
 
-    function handleInvoiceDetailLinesChange(detailLine: DetailLine, index: number) {
-        if (detailLines?.length && detailLines.length > index + 1) {
-            if (detailLines[index]) {
-                detailLines[index] = detailLine;
-            }
-            return setInvoiceFull({
-                ...invoiceFull,
-                invoiceData: {
-                    ...invoiceData,
-                    invoiceDetails: { ...invoiceDetails, detailLines },
-                },
-            });
+    function saveToHistory(invoiceInfo: InvoiceInfo) {
+        const invoiceHistory = getFromLS<InvoiceInfo[]>('invoice-history');
+        if (invoiceHistory.length) {
+            return setToLS<InvoiceInfo[]>('invoice-history', [...invoiceHistory, invoiceInfo]);
         }
+        return setToLS<InvoiceInfo[]>('invoice-history', [invoiceInfo]);
+    }
+
+    function handleSend() {
+        const invoiceInfo: InvoiceInfo = {
+            templateId: Number(templateId),
+            invoiceFull: invoiceFull,
+            recipientEmail,
+        };
+
+        saveToHistory(invoiceInfo);
+        setIsLoading(true);
+        // Send simulation
+        setTimeout(() => {
+            setIsLoading(false);
+            navigate('/IMAS/Home');
+        }, 1000);
+    }
+
+    function handleCancel() {
+        setIsModalOpen(false);
+    }
+
+    function handleBack() {
+        navigate('/IMAS/Create/Invoice');
     }
 
     return (
         <Wrapper>
             <Row>
                 <Col span={10}>
-                    <Title>Fill out the data</Title>
-                    <Collapse
-                        className='editor-collapse'
-                        bordered={false}
-                        defaultActiveKey={['1', '2', '3']}
-                    >
-                        <Panel header='Invoice Data' key='1'>
-                            <Space direction='vertical'>
-                                <Input addonBefore='Invoice Nr:' />
-                                {invoiceDetails.detailLines
-                                    ? invoiceDetails.detailLines.map((detailLine, index) => {
-                                          if (detailLine) {
-                                              return (
-                                                  <>
-                                                      <Space>
-                                                          <Title level={5}>
-                                                              Detail Line #{index + 1}
-                                                          </Title>
-                                                          <Button
-                                                              icon={<MinusOutlined />}
-                                                              onClick={() =>
-                                                                  handleRemoveInvoiceDetailLine(
-                                                                      index,
-                                                                  )
-                                                              }
-                                                          />
-                                                      </Space>
-                                                      <Input
-                                                          addonBefore='Title: '
-                                                          value={detailLine?.title}
-                                                          onChange={(e) =>
-                                                              handleInvoiceDetailLinesChange(
-                                                                  {
-                                                                      ...detailLine,
-                                                                      title: e.target.value,
-                                                                  },
-                                                                  index,
-                                                              )
-                                                          }
-                                                      />
-                                                      <Input
-                                                          addonBefore='Data: '
-                                                          value={detailLine?.data}
-                                                          onChange={(e) =>
-                                                              handleInvoiceDetailLinesChange(
-                                                                  {
-                                                                      ...detailLine,
-                                                                      data: e.target.value,
-                                                                  },
-                                                                  index,
-                                                              )
-                                                          }
-                                                      />
-                                                  </>
-                                              );
-                                          }
-                                      })
-                                    : null}
-                                {!invoiceDetails.detailLines?.length ||
-                                invoiceDetails.detailLines?.length < 4 ? (
-                                    <Button
-                                        icon={<PlusOutlined />}
-                                        onClick={() => handleAddInvoiceDetailLine()}
+                    <div className='invoice-editor'>
+                        <Title>Fill out the data</Title>
+                        <Collapse
+                            className='editor-collapse custom-scrollbar-data inner-invoice-editor'
+                            bordered={false}
+                            defaultActiveKey={['1', '2', '3']}
+                        >
+                            <Panel header='Invoice Data' key='1'>
+                                <Space direction='vertical'>
+                                    <Input
+                                        addonBefore='Invoice Nr:'
+                                        value={invoiceDetails.invoiceNr}
+                                        onChange={(e) => handleInvoiceNumberChange(e.target.value)}
                                     />
-                                ) : null}
-                            </Space>
-                        </Panel>
-                        <Panel header='Item List' key='3'>
-                            <Space direction='vertical'></Space>
-                        </Panel>
-                        <Panel header='Tax Info' key='3'>
-                            <Space direction='vertical'> </Space>
-                        </Panel>
-                    </Collapse>
+                                    <IMASCreateNewInvoiceDetailInput
+                                        invoiceFull={invoiceFull}
+                                        setInvoiceFull={setInvoiceFull}
+                                    />
+                                </Space>
+                            </Panel>
+                            <Panel header='Item List' key='2'>
+                                <IMASCreateNewInvoiceItemInput
+                                    invoiceFull={invoiceFull}
+                                    setInvoiceFull={setInvoiceFull}
+                                />
+                            </Panel>
+                            <Panel header='Tax Info' key='3'>
+                                <Space direction='vertical'>
+                                    <IMASCreateNewInvoiceTaxInput
+                                        invoiceFull={invoiceFull}
+                                        setInvoiceFull={setInvoiceFull}
+                                    />
+                                </Space>
+                            </Panel>
+                        </Collapse>
+                    </div>
                 </Col>
                 <Col span={14}>
-                    <Row justify='space-between'>
-                        <Col>
-                            <Title>Preview</Title>
-                        </Col>
-                        <Col>
-                            <Space>
-                                <Button>BACK</Button>
-                                <Button>SEND</Button>
-                            </Space>
-                        </Col>
-                    </Row>
-                    <IMASInvoicePreview invoiceData={invoiceData} invoiceStyling={invoiceStyling} />
+                    <div className='invoice-preview'>
+                        <Row justify='space-between'>
+                            <Col>
+                                <Title>Preview</Title>
+                            </Col>
+                            <Col>
+                                <Space>
+                                    <Button onClick={() => handleBack()}>BACK</Button>
+                                    <Button onClick={() => setIsModalOpen(true)}>SEND</Button>
+                                </Space>
+                            </Col>
+                        </Row>
+                        <IMASInvoicePreview
+                            invoiceData={invoiceData}
+                            invoiceStyling={invoiceStyling}
+                        />
+                    </div>
                 </Col>
             </Row>
+            <Modal
+                title='Almost Done!'
+                open={isModalOpen}
+                okText='Send'
+                confirmLoading={isLoading}
+                onCancel={() => handleCancel()}
+                onOk={() => handleSend()}
+            >
+                <Space direction='vertical'>
+                    <Input
+                        addonBefore='Recipient E-mail: '
+                        status={isInputError ? 'error' : undefined}
+                        value={recipientEmail}
+                        onChange={(e) => setRecipientEmail(e.target.value)}
+                    />
+                </Space>
+            </Modal>
         </Wrapper>
     );
 }

@@ -7,9 +7,9 @@ import {
     PlusOutlined,
     UserOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, MenuProps, Space, Tabs, Typography } from 'antd';
-import { Content } from 'antd/es/layout/layout';
+import { Breadcrumb, Layout, Menu, MenuProps, Space, Typography } from 'antd';
 import Sider from 'antd/es/layout/Sider';
+import { Content } from 'antd/es/layout/layout';
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { IMASKeys } from '../../types/appRouter';
@@ -19,27 +19,29 @@ const { Title } = Typography;
 
 export function IMAS(): JSX.Element {
     const location = useLocation();
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [selection, setSelection] = useState('1');
     const navigate = useNavigate();
+    const currLocation = location.pathname;
 
     type MenuItem = Required<MenuProps>['items'][number];
 
-    useEffect(() => {
-        setSelection(getSelection());
-    }, []);
-
-    function getSelection() {
-        console.log(location.pathname);
-        if (location.pathname === '/IMAS/Create/Invoice') {
-            return '1';
+    function getSelection(currLocation: string) {
+        if (currLocation === '/IMAS/Home') {
+            return [IMASKeys.home];
         }
-        return '2';
+        if (currLocation === '/IMAS/Create/Invoice') {
+            return [IMASKeys.create, IMASKeys.createInvoice];
+        }
+        if (currLocation === '/IMAS/Create/Template') {
+            return [IMASKeys.create, IMASKeys.createTemplate];
+        }
+        return ['2'];
     }
 
     const items: MenuItem[] = [
         getItem('Home', IMASKeys.home, <HomeOutlined />),
-        getItem('Create new', 'create', <PlusOutlined />, [
+        getItem('Create new', IMASKeys.create, <PlusOutlined />, [
             getItem('Invoice', IMASKeys.createInvoice, <DollarCircleOutlined />),
             getItem('Template', IMASKeys.createTemplate, <LayoutOutlined />),
             getItem('Data Template', IMASKeys.createDataTemplate, <LayoutOutlined />),
@@ -61,6 +63,9 @@ export function IMAS(): JSX.Element {
     }
 
     const handleSelection: MenuProps['onClick'] = (e) => {
+        if (e.key === IMASKeys.home) {
+            navigate('/IMAS/Home');
+        }
         if (e.key === IMASKeys.createInvoice) {
             navigate('/IMAS/Create/Invoice');
         }
@@ -85,12 +90,13 @@ export function IMAS(): JSX.Element {
                     collapsed={collapsed}
                     onCollapse={(value) => setCollapsed(value)}
                     className='imas-sider'
+                    onMouseOver={() => setCollapsed(false)}
+                    onMouseOut={() => setCollapsed(true)}
                 >
-                    <Title level={3}> IMAS </Title>
                     <Menu
                         className='imas-sider-menu'
                         defaultSelectedKeys={['1']}
-                        selectedKeys={[selection]}
+                        selectedKeys={getSelection(currLocation)}
                         onClick={handleSelection}
                         mode='inline'
                         items={items}
@@ -110,12 +116,7 @@ export function IMAS(): JSX.Element {
                                 {createBreadCrumbs()}
                             </Breadcrumb>
                         </Space>
-                        <div
-                            style={{
-                                padding: 24,
-                                minHeight: 360,
-                            }}
-                        >
+                        <div className='imas-content'>
                             <Outlet />
                         </div>
                     </Content>

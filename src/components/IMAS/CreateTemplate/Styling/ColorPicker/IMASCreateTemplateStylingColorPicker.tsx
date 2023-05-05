@@ -9,7 +9,10 @@ interface Props {
     setInvoiceStyling: (invoiceStyling: InvoiceStyling) => void;
 }
 
-export function IMASCreateTemplateStylingColorPicker({ invoiceStyling, setInvoiceStyling }: Props) {
+export function IMASCreateTemplateStylingColorPicker({
+    invoiceStyling,
+    setInvoiceStyling,
+}: Props): JSX.Element {
     const { backgroundColor } = invoiceStyling;
     const [isShowColorPicker, setIsShowColorPicker] = useState(false);
 

@@ -15,7 +15,7 @@ export function AppPage(): JSX.Element {
 
     function init(): void {
         if (location.pathname === '/') {
-            navigation('IMAS');
+            navigation('IMAS/Home');
         }
     }
 

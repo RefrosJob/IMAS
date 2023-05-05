@@ -13,7 +13,10 @@ interface Props {
     setInvoiceData: (invoiceData: InvoiceData) => void;
 }
 
-export function IMASCreateTemplatePersistantData({ invoiceData, setInvoiceData }: Props) {
+export function IMASCreateTemplatePersistantData({
+    invoiceData,
+    setInvoiceData,
+}: Props): JSX.Element {
     const [isUploadLoading, setIsUploadLoading] = useState(false);
     const { companyData, clientContact, termsAndConditions } = invoiceData;
 

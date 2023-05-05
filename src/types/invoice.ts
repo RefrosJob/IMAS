@@ -1,3 +1,14 @@
+export interface InvoiceInfo {
+    templateId: number;
+    invoiceFull: InvoiceFull;
+    recipientEmail: string;
+}
+
+export interface TemplateBase {
+    id: number;
+    html: string;
+}
+
 export interface InvoiceFull {
     invoiceName: string;
     invoiceLayout: InvoiceLayout;
@@ -18,6 +29,7 @@ export interface InvoiceStyling {
 }
 
 export interface InvoiceData {
+    baseId: number;
     header: InvoiceHeader;
     companyData: CompanyData;
     clientContact: ClientContact;
@@ -39,14 +51,12 @@ export interface DetailLine {
     data: string;
 }
 
-export type Lines = [string, string, string, string?];
-
 export interface Line {
     body: string;
 }
 
 export interface StandartData {
-    lines: Lines;
+    lines: string[];
 }
 
 export interface InvoiceHeader {
@@ -68,14 +78,18 @@ export interface SaleItem {
     price: number;
 }
 
+export type SaleItems = SaleItem[];
+
 export interface SaleTax {
     taxName: string;
     taxPercent: number;
 }
 
+export type SaleTaxes = SaleTax[];
+
 export interface SaleData {
-    items: SaleItem[];
-    taxes: SaleTax[];
+    items: SaleItems;
+    taxes: SaleTaxes;
 }
 
 export interface TermsAndConditionsData {

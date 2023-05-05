@@ -14,6 +14,7 @@ import { IMASCreateTemplateStyling } from './Styling/IMASCreateTemplateStyling';
 import { getFromLS, setToLS } from '../../../microservices/storage';
 import { useNavigate } from 'react-router-dom';
 import { IMASInvoicePreview } from '../InvoicePreview/IMASInvoicePreview';
+import { IMASCreateTemplateBase } from './Base/IMASCreateTemplateBase';
 
 const { Title } = Typography;
 
@@ -24,6 +25,7 @@ export function IMASCreateTemplate(): JSX.Element {
     const [isInputError, setIsInputError] = useState(false);
 
     const [templateName, setTemplateName] = useState('');
+    const [baseId, setBaseId] = useState(0);
     const [invoiceLayout, setInvoiceLayout] = useState<InvoiceLayout>(invoiceLayoutTemplate);
     const [invoiceData, setInvoiceData] = useState<InvoiceData>(getInvoiceTemplate(invoiceLayout));
     const [invoiceStyling, setInvoiceStyling] = useState<InvoiceStyling>(invoiceStylingTemplate);
@@ -39,9 +41,21 @@ export function IMASCreateTemplate(): JSX.Element {
                 currentTemplates.length
                     ? [
                           ...currentTemplates,
-                          { invoiceName: templateName, invoiceLayout, invoiceData, invoiceStyling },
+                          {
+                              invoiceName: templateName,
+                              invoiceLayout,
+                              invoiceData,
+                              invoiceStyling,
+                          },
                       ]
-                    : [{ invoiceName: templateName, invoiceLayout, invoiceData, invoiceStyling }],
+                    : [
+                          {
+                              invoiceName: templateName,
+                              invoiceLayout,
+                              invoiceData,
+                              invoiceStyling,
+                          },
+                      ],
             );
         } catch {
             message.error('Invoice Save Failed!');
@@ -67,6 +81,11 @@ export function IMASCreateTemplate(): JSX.Element {
     const tabItems: TabsProps['items'] = [
         {
             key: '1',
+            label: 'Base',
+            children: <IMASCreateTemplateBase />,
+        },
+        {
+            key: '2',
             label: 'Content Layout',
             children: (
                 <IMASCreateTemplateContentLayout
@@ -76,7 +95,7 @@ export function IMASCreateTemplate(): JSX.Element {
             ),
         },
         {
-            key: '2',
+            key: '3',
             label: 'Headers',
             children: (
                 <IMASCreateTemplateHeaders
@@ -86,7 +105,7 @@ export function IMASCreateTemplate(): JSX.Element {
             ),
         },
         {
-            key: '3',
+            key: '4',
             label: 'Persistant Data',
             children: (
                 <IMASCreateTemplatePersistantData
@@ -96,7 +115,7 @@ export function IMASCreateTemplate(): JSX.Element {
             ),
         },
         {
-            key: '4',
+            key: '5',
             label: 'Styling',
             children: (
                 <IMASCreateTemplateStyling
@@ -122,7 +141,7 @@ export function IMASCreateTemplate(): JSX.Element {
                     </div>
                 </Col>
                 <Col span={14}>
-                    <Space direction='vertical'>
+                    <div className='invoice-preview'>
                         <Row justify='space-between'>
                             <Col>
                                 <Title>Preview</Title>
@@ -136,12 +155,11 @@ export function IMASCreateTemplate(): JSX.Element {
                                 </Space>
                             </Col>
                         </Row>
-
                         <IMASInvoicePreview
                             invoiceData={invoiceData}
                             invoiceStyling={invoiceStyling}
                         />
-                    </Space>
+                    </div>
                 </Col>
             </Row>
             <Modal

@@ -2488,6 +2488,13 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/dompurify@^3.0.2":
+  "integrity" "sha512-YBL4ziFebbbfQfH5mlC+QTJsvh0oJUrWbmxKMyEdL7emlHJqGR2Qb34TEFKj+VCayBvjKy3xczMFNhugThUsfQ=="
+  "resolved" "https://registry.npmjs.org/@types/dompurify/-/dompurify-3.0.2.tgz"
+  "version" "3.0.2"
+  dependencies:
+    "@types/trusted-types" "*"
+
 "@types/eslint@^7.2.6":
   "integrity" "sha512-KubbADPkfoU75KgKeKLsFHXnU4ipH7wYg0TRT33NK3N3yiu7jlFAAoygIWBV+KbuHx/G+AvuGX6DllnK35gfJA=="
   "resolved" "https://registry.npmjs.org/@types/eslint/-/eslint-7.28.2.tgz"
@@ -2705,6 +2712,11 @@
   "version" "5.14.1"
   dependencies:
     "@types/jest" "*"
+
+"@types/trusted-types@*":
+  "integrity" "sha512-NfQ4gyz38SL8sDNrSixxU2Os1a5xcdFxipAFxYEuLUlvU2uDwS4NUpsImcf1//SlWItCVMMLiylsxbmNMToV/g=="
+  "resolved" "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.3.tgz"
+  "version" "2.0.3"
 
 "@types/uglify-js@*":
   "integrity" "sha512-O3MmRAk6ZuAKa9CHgg0Pr0+lUOqoMLpc9AS4R8ano2auvsg7IE8syF3Xh/NPr26TWklxYcqoEEFdzLLs1fV9PQ=="
@@ -5615,6 +5627,11 @@
   "version" "4.2.2"
   dependencies:
     "domelementtype" "^2.2.0"
+
+"dompurify@^3.0.2":
+  "integrity" "sha512-B8c6JdiEpxAKnd8Dm++QQxJL4lfuc757scZtcapj6qjTjrQzyq5iAyznLKVvK+77eYNiFblHBlt7MM0fOeqoKw=="
+  "resolved" "https://registry.npmjs.org/dompurify/-/dompurify-3.0.2.tgz"
+  "version" "3.0.2"
 
 "domutils@^1.7.0":
   "integrity" "sha512-Lgd2XcJ/NjEw+7tFvfKxOzCYKZsdct5lczQ2ZaQY8Djz7pfAD3Gbp8ySJWtreII/vDlMVmxwa6pHmdxIYgttDg=="

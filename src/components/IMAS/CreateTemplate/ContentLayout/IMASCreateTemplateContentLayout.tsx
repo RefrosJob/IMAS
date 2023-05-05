@@ -9,7 +9,10 @@ interface Props {
     setInvoiceLayout: (invoiceLayout: InvoiceLayout) => void;
 }
 
-export function IMASCreateTemplateContentLayout({ invoiceLayout, setInvoiceLayout }: Props) {
+export function IMASCreateTemplateContentLayout({
+    invoiceLayout,
+    setInvoiceLayout,
+}: Props): JSX.Element {
     function handleTitleLeftChange(isTitleLeft: boolean) {
         setInvoiceLayout({ ...invoiceLayout, isTitleLeft });
     }

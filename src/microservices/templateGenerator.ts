@@ -1,32 +1,27 @@
-import { replace } from 'lodash';
-import { DetailLine, DetailLines, InvoiceData, InvoiceStyling, Lines } from '../types/invoice';
+import { sumBy } from 'lodash';
+import { InvoiceData, InvoiceStyling } from '../types/invoice';
+import DOMPurify from 'dompurify';
 
 export function generateTemplate(invoiceData: InvoiceData, invoiceStyling: InvoiceStyling): string {
     const { header, companyData, clientContact, termsAndConditions, invoiceDetails, logoUrl } =
         invoiceData;
+    const { saleData } = invoiceData;
     const { backgroundColor, fontSize, fontName, fontFamily } = invoiceStyling;
+    const totalBeforeTaxes = sumBy(saleData.items, (item) => item.price);
+    const totalAfterTaxes =
+        totalBeforeTaxes - totalBeforeTaxes * sumBy(saleData.taxes, (tax) => tax.taxPercent / 100);
 
-    function getLines(lines: Lines) {
-        return replace(lines.toString(), /,/g, '<br /> \n');
+    function getHTMLFriendlyString(strings: string[], extra = '') {
+        return strings.join(`${extra}\n`);
     }
 
-    function getDetailLines(detailLine: string[]) {
-        return replace(detailLine.toString(), /,/g, '\n');
-    }
-
-    console.log(
-        replace(
-            clientContact.secondColumn?.lines.map((line) => line + '<br>').toString() || '',
-            /,/g,
-            '',
-        ),
-    );
-    return `<!DOCTYPE html>
+    return DOMPurify.sanitize(
+        `<!DOCTYPE html>
 <style>
     .main-body {
         border-radius: 1em;
         padding: 2em;
-        height: 80em;
+        height: 72em;
         font-family: ${fontName}, 'Arial', ${fontFamily};
         font-size: ${fontSize}px;
         margin: 1rem;
@@ -214,12 +209,15 @@ export function generateTemplate(invoiceData: InvoiceData, invoiceStyling: Invoi
         </div>
         <div> 
             <h2>${companyData.title}</h2>
-            <p class="inner-contact-text">${getLines(companyData.lines)}</p>
+            <p class="inner-contact-text">${getHTMLFriendlyString(companyData.lines, '<br/>')}</p>
         </div>
         <div class="contact-line">
             <div>
                 <h2>${clientContact.firstColumn.title}</h2>
-                <p class="inner-contact-text">${getLines(clientContact.firstColumn.lines)}</p>
+                <p class="inner-contact-text">${getHTMLFriendlyString(
+                    clientContact.firstColumn.lines,
+                    '<br/>',
+                )}</p>
 
             </div>
             
@@ -228,32 +226,28 @@ export function generateTemplate(invoiceData: InvoiceData, invoiceStyling: Invoi
                           clientContact.secondColumn?.title
                               ? `
                                 <h2>${clientContact.secondColumn.title}</h2>
-                                <p class="inner-contact-text">${getLines(
+                                <p class="inner-contact-text">${getHTMLFriendlyString(
                                     clientContact.secondColumn.lines,
+                                    '<br/>',
                                 )}
                                 </p> `
                               : ''
                       }
                     </div>
-            <div class="contact-line-2">
-                <ul class="invoice-info-list">
-                    <li>
-                          <p class="sub-heading-big"><b>Invoice nr.</b> ${
-                              invoiceDetails.invoiceNr
-                          }</p>
-                    </li>
-                    ${
-                        invoiceDetails.detailLines
-                            ? getDetailLines(
-                                  invoiceDetails.detailLines.map(
-                                      (detailLine) =>
-                                          `<li><p></p><b class="sub-heading">${detailLine?.title}: </b>${detailLine?.data}</p></li>`,
-                                  ),
-                              )
-                            : ''
-                    }
-                </ul>
-            </div>
+
+                    <div>
+                    <h2><b>Invoice Nr. </b>${invoiceDetails.invoiceNr}</h2>
+                      ${
+                          invoiceDetails.detailLines
+                              ? getHTMLFriendlyString(
+                                    invoiceDetails.detailLines.map(
+                                        (detailLine) =>
+                                            `<p class="inner-contact-text"><b class="sub-heading">${detailLine?.title}: </b>${detailLine?.data}</p>`,
+                                    ),
+                                )
+                              : ''
+                      }
+                    </div>
             
         </div>
         <div>
@@ -266,36 +260,42 @@ export function generateTemplate(invoiceData: InvoiceData, invoiceStyling: Invoi
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="table-row">
-                        <td class="table-column index-column">1</td>
-                        <td class="table-column">Item #1</td>
-                        <td class="table-column amount-column">5$</td>
-                    </tr>
-                    <tr class="table-row">
-                        <td class="table-column index-column">2</td>
-                        <td class="table-column">Item #2</td>
-                        <td class="table-column amount-column">5$</td>
-                    </tr>
-                    <tr class="table-row">
-                        <td class="table-column index-column">3</td>
-                        <td class="table-column">Item #3</td>
-                        <td class="table-column amount-column">5$</td>
-                    </tr>
+                ${
+                    saleData.items.length
+                        ? getHTMLFriendlyString(
+                              saleData.items.map(
+                                  (item, index) => ` <tr class="table-row">
+                                <td class="table-column index-column">${index + 1}</td>
+                                <td class="table-column">${item.title}</td>
+                                <td class="table-column amount-column">${item.price}$</td>
+                            </tr>`,
+                              ),
+                          )
+                        : ''
+                }
                     <table class="commodity-sale-table-total">
                          <tr class="table-total-row">
                             <td></td>
                             <td class="table-column total-column subtotal-column" width="14%">Subtotal: </td>
-                            <td class="table-column total-column amount-column subtotal-column" width="20%">10$</td>
+                            <td class="table-column total-column amount-column subtotal-column" width="20%">${totalBeforeTaxes}$</td>
                         </tr>
-                        <tr class="table-total-row">
-                            <td></td>
-                            <td class="table-column total-column cross-border-top" width="14%">Tax: </td>
-                            <td class="table-column total-column amount-column cross-border-top" width="20%">20%</td>
-                        </tr>
+                        ${
+                            saleData.taxes.length
+                                ? getHTMLFriendlyString(
+                                      saleData.taxes.map(
+                                          (tax) => `<tr class="table-total-row">
+                                                        <td></td>
+                                                        <td class="table-column total-column cross-border-top" width="14%">${tax.taxName}: </td>
+                                                        <td class="table-column total-column amount-column cross-border-top" width="20%">${tax.taxPercent}%</td>
+                                                    </tr>`,
+                                      ),
+                                  )
+                                : ''
+                        }
                          <tr class="table-total-row">
                             <td></td>
                             <td class="table-column total-column" width="14%">Total: </td>
-                            <td class="table-column total-column amount-column" width="20%">12$</td>
+                            <td class="table-column total-column amount-column" width="20%">${totalAfterTaxes}$</td>
                         </tr>
                     </table>
                 </tbody>
@@ -315,5 +315,10 @@ export function generateTemplate(invoiceData: InvoiceData, invoiceStyling: Invoi
     </div>
 </body>
 </html>
-`;
+`,
+        {
+            USE_PROFILES: { html: true },
+            FORCE_BODY: true,
+        },
+    );
 }

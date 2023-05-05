@@ -1,7 +1,7 @@
 import { Collapse, Input, InputNumber, Space } from 'antd';
 import React from 'react';
-import { IMASCreateTemplateStylingColorPicker } from './ColorPicker/IMASCreateTemplateStylingColorPicker';
 import { InvoiceStyling } from '../../../../types/invoice';
+import { IMASCreateTemplateStylingColorPicker } from './ColorPicker/IMASCreateTemplateStylingColorPicker';
 
 const { Panel } = Collapse;
 
@@ -10,7 +10,10 @@ interface Props {
     setInvoiceStyling: (invoiceStyling: InvoiceStyling) => void;
 }
 
-export function IMASCreateTemplateStyling({ invoiceStyling, setInvoiceStyling }: Props) {
+export function IMASCreateTemplateStyling({
+    invoiceStyling,
+    setInvoiceStyling,
+}: Props): JSX.Element {
     function handleFontSizeChange(fontSize: number) {
         setInvoiceStyling({ ...invoiceStyling, fontSize });
     }

@@ -25,10 +25,18 @@ export default styled.div`
             }
         }
 
+        .site-layout {
+            background-color: var(--body-color);
+        }
+
         .imas-content-head {
             .anticon {
                 font-size: 1.5rem;
             }
+        }
+
+        .imas-content {
+            padding: 2em;
         }
     }
 `;

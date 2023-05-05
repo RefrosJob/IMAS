@@ -5,6 +5,7 @@ export interface AppRoute {
 
 export enum IMASKeys {
     home = 'home',
+    create = 'create',
     createInvoice = 'createInvoice',
     createTemplate = 'createTemplate',
     createDataTemplate = 'createDataTemplate',
